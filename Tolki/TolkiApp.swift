@@ -8,10 +8,17 @@
 import SwiftUI
 
 @main
-struct TolkiApp: App {
+struct MyApp: App {
+    @AppStorage("isLoggedIn") var isLoggedIn: Bool = false  // Состояние авторизации
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if isLoggedIn {
+                MainView()  // Показываем основной экран, если пользователь авторизован
+            } else {
+                ContentView()  // Показываем экран контента (онбординг или вход)
+            }
         }
     }
 }
+
