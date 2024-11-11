@@ -9,7 +9,7 @@ import SwiftUI
 struct ContentView: View {
     let pages = [
         OnboardingData(image: "img1", title: "Добро пожаловать!", description: "Откройте для себя рецензии на книги"),
-        OnboardingData(image: "img2", title: "Находите книги", description: "Ищите книги по жанрам, авторам и ключевым словам"),
+        OnboardingData(image: "img2", title: "Находите подкасты", description: "Ищите что послушать по жанрам, авторам и ключевым словам"),
         OnboardingData(image: "img3", title: "Поделитесь мнением", description: "Оставляйте свои рецензии и делитесь ими с другими")
     ]
     
