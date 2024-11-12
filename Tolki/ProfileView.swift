@@ -8,15 +8,11 @@
 import SwiftUI
 
 struct ProfileView: View {
-    @State private var user: UserProfile = UserProfile(
-        firstName: "John",
-        lastName: "Doe",
-        email: "john.doe@example.com",
-        avatar: UIImage(named: "avatar_placeholder")
-    )
+    @EnvironmentObject var themeManager: ThemeManager
+    @State private var user: UserProfile = UserProfile(firstName: "John", lastName: "Doe", email: "john.doe@example.com", avatar: UIImage(named: "avatar_placeholder"))
     @State private var isEditing: Bool = false
-    @State private var selectedImage: UIImage?  // Добавляем состояние для выбранного изображения
-
+    @State private var selectedImage: UIImage?
+    
     var body: some View {
         NavigationView {
             VStack {
@@ -38,30 +34,26 @@ struct ProfileView: View {
                 
                 Text("\(user.firstName) \(user.lastName)")
                     .font(.largeTitle)
+                    .foregroundColor(themeManager.currentTheme.textColor)
                     .padding(.top, 20)
                 
                 Text(user.email)
                     .font(.subheadline)
+                    .foregroundColor(themeManager.currentTheme.textColor)
                     .padding(.top, 5)
                 
                 Spacer()
                 
-                Button(action: {
+                Button("Edit Profile") {
                     isEditing.toggle()
-                }) {
-                    Text("Edit Profile")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .frame(width: 200, height: 50)
-                        .background(Color.blue)
-                        .cornerRadius(10)
                 }
-                .sheet(isPresented: $isEditing) {
-                    EditProfileView(user: $user, selectedImage: $selectedImage) // Передаем selectedImage в EditProfileView
-                }
+                .padding()
+                .foregroundColor(themeManager.currentTheme.buttonTextColor)
+                .background(themeManager.currentTheme.buttonColor)
+                .cornerRadius(8)
             }
             .padding()
+            .background(themeManager.currentTheme.backgroundColor)
             .navigationBarTitle("Profile", displayMode: .inline)
         }
     }

@@ -7,10 +7,9 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct LoginView: View {
-    @Binding var isLoggedIn: Bool  // Ссылка на состояние авторизации
+    @EnvironmentObject var themeManager: ThemeManager
+    @Binding var isLoggedIn: Bool
     @State private var email = ""
     @State private var password = ""
     
@@ -19,22 +18,25 @@ struct LoginView: View {
             TextField("Введите email", text: $email)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
-            
+                .foregroundColor(themeManager.currentTheme.textColor)
             SecureField("Введите пароль", text: $password)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
+                .foregroundColor(themeManager.currentTheme.textColor)
             
             Button("Войти") {
-                // Логика авторизации
-                if email == "user@example.com" && password == "password123" {
-                    isLoggedIn = true  // Устанавливаем авторизацию
+                if email == "1234@example.com" && password == "123456" {
+                    isLoggedIn = true
                 } else {
-                    // Показываем ошибку авторизации
                     print("Неверные данные")
                 }
             }
             .padding()
+            .foregroundColor(themeManager.currentTheme.buttonTextColor)
+            .background(themeManager.currentTheme.buttonColor)
+            .cornerRadius(8)
         }
         .padding()
+        .background(themeManager.currentTheme.backgroundColor)
     }
 }
