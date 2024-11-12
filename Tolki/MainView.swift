@@ -4,6 +4,7 @@
 //
 //  Created by Эльвира on 11.11.2024.
 //
+
 import SwiftUI
 
 struct MainView: View {
@@ -12,28 +13,31 @@ struct MainView: View {
         Card(title: "Card 2", description: "Description for card 2", tags: ["Tag3"]),
         Card(title: "Card 3", description: "Description for card 3", tags: ["Tag1"]),
         Card(title: "Card 4", description: "Description for card 4", tags: ["Tag2", "Tag3"]),
-        Card(title: "Card 4", description: "Description for card 4", tags: ["Tag5", "Tag3"])
+        Card(title: "Card 5", description: "Description for card 5", tags: ["Tag5", "Tag3"])
     ]
-    
     @State private var showModal = false
     @State private var selectedTag: String = "All"
-    
+    @State private var searchText: String = ""
+
     // Получаем уникальные теги из всех карточек
     var uniqueTags: [String] {
         var tags = cards.flatMap { $0.tags }
-        tags.append("All")  // Добавляем "All" для отображения всех карточек
-        return Array(Set(tags)).sorted() // Убираем дубликаты и сортируем
+        tags.append("All")
+        return Array(Set(tags)).sorted()
     }
-    
-    // Фильтрация карточек по выбранному тегу
+
+    // Фильтрация карточек по тегу и поисковому запросу
     var filteredCards: [Card] {
-        if selectedTag == "All" {
-            return cards
+        let filteredByTag = selectedTag == "All" ? cards : cards.filter { $0.tags.contains(selectedTag) }
+        if searchText.isEmpty {
+            return filteredByTag
         } else {
-            return cards.filter { $0.tags.contains(selectedTag) }
+            return filteredByTag.filter {
+                $0.title.contains(searchText) || $0.description.contains(searchText)
+            }
         }
     }
-    
+
     var body: some View {
         NavigationView {
             VStack {
@@ -45,8 +49,15 @@ struct MainView: View {
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding()
-                
-                // Список карточек, отфильтрованных по выбранному тегу
+
+                // Поле поиска
+                TextField("Search", text: $searchText)
+                    .padding()
+                    .background(Color(.secondarySystemBackground))
+                    .cornerRadius(10)
+                    .padding(.horizontal)
+
+                // Список карточек
                 List {
                     ForEach(filteredCards) { card in
                         CardView(card: card)
@@ -69,85 +80,11 @@ struct MainView: View {
             }
         }
     }
-    
+
     // Функция для удаления карточки
     func deleteCard(at offsets: IndexSet) {
         cards.remove(atOffsets: offsets)
     }
-}
-
-struct CardView: View {
-    var card: Card
-    
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text(card.title)
-                .font(.headline)
-            Text(card.description)
-                .font(.subheadline)
-                .lineLimit(2)
-                .padding(.top, 5)
-            HStack {
-                ForEach(card.tags, id: \.self) { tag in
-                    Text(tag)
-                        .font(.caption)
-                        .padding(5)
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(5)
-                }
-            }
-            .padding(.top, 5)
-        }
-        .padding()
-        .background(Color.white)
-        .cornerRadius(10)
-        .shadow(radius: 5)
-    }
-}
-
-struct AddCardView: View {
-    @Binding var cards: [Card]
-    @State private var title: String = ""
-    @State private var description: String = ""
-    @State private var tags: String = ""
-    
-    // Для закрытия модального окна
-    @Environment(\.presentationMode) var presentationMode
-    
-    var body: some View {
-        NavigationView {
-            Form {
-                Section(header: Text("Card Information")) {
-                    TextField("Title", text: $title)
-                    TextField("Description", text: $description)
-                    TextField("Tags (comma separated)", text: $tags)
-                }
-                
-                Button("Add Card") {
-                    let tagList = tags.split(separator: ",").map {
-                        String($0).trimmingCharacters(in: .whitespaces)
-                    }
-                    let newCard = Card(title: title, description: description, tags: tagList)
-                    cards.append(newCard)
-                    
-                    // Закрыть модальное окно после добавления карточки
-                    presentationMode.wrappedValue.dismiss()
-                }
-            }
-            .navigationBarTitle("Add Card")
-            .navigationBarItems(trailing: Button("Cancel") {
-                            // Закрытие модального окна при нажатии на Cancel
-                            presentationMode.wrappedValue.dismiss()
-                        })
-        }
-    }
-}
-
-struct Card: Identifiable, Hashable {
-    var id = UUID()
-    var title: String
-    var description: String
-    var tags: [String]
 }
 
 #Preview {
