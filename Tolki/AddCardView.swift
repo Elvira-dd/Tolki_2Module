@@ -8,38 +8,41 @@
 import SwiftUI
 
 struct AddCardView: View {
-    @EnvironmentObject var themeManager: ThemeManager
     @Binding var cards: [Card]
     @State private var title: String = ""
     @State private var description: String = ""
     @State private var tags: String = ""
+    
+    // Для закрытия модального окна
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Card Information").foregroundColor(themeManager.currentTheme.textColor)) {
+                Section(header: Text("Card Information")) {
                     TextField("Title", text: $title)
-                        .foregroundColor(themeManager.currentTheme.textColor)
                     TextField("Description", text: $description)
-                        .foregroundColor(themeManager.currentTheme.textColor)
                     TextField("Tags (comma separated)", text: $tags)
-                        .foregroundColor(themeManager.currentTheme.textColor)
                 }
+                
                 Button("Add Card") {
-                    let tagList = tags.split(separator: ",").map { String($0).trimmingCharacters(in: .whitespaces) }
-                    cards.append(Card(title: title, description: description, tags: tagList))
+                    let tagList = tags.split(separator: ",").map {
+                        String($0).trimmingCharacters(in: .whitespaces)
+                    }
+                    let newCard = Card(title: title, description: description, tags: tagList)
+                    cards.append(newCard)
+                    
+                    // Закрыть модальное окно после добавления карточки
                     presentationMode.wrappedValue.dismiss()
                 }
-                .foregroundColor(themeManager.currentTheme.buttonTextColor)
-                .background(themeManager.currentTheme.buttonColor)
-                .cornerRadius(8)
             }
-            .background(themeManager.currentTheme.backgroundColor)
             .navigationBarTitle("Add Card")
             .navigationBarItems(trailing: Button("Cancel") {
-                presentationMode.wrappedValue.dismiss()
-            })
+                            // Закрытие модального окна при нажатии на Cancel
+                            presentationMode.wrappedValue.dismiss()
+                        })
         }
     }
 }
+
+

@@ -8,35 +8,37 @@
 import SwiftUI
 
 struct MainTabView: View {
-    @EnvironmentObject var themeManager: ThemeManager
-    
+    @Binding var isLoggedIn: Bool  // Ссылка на состояние авторизации
+    @EnvironmentObject var themeManager: ThemeManager  // Подключение ThemeManager как EnvironmentObject
+
     var body: some View {
         TabView {
             MainView()
                 .tabItem {
                     Image(systemName: "list.bullet")
                     Text("Cards")
-                        .foregroundColor(themeManager.currentTheme.textColor)
                 }
-            ProfileView()
+            
+            ProfileView(isLoggedIn: $isLoggedIn)
                 .tabItem {
                     Image(systemName: "person.circle")
                     Text("Profile")
-                        .foregroundColor(themeManager.currentTheme.textColor)
                 }
+            
             SettingsView()
                 .tabItem {
-                    Image(systemName: "person.circle")
-                    Text("Setting")
-                        .foregroundColor(themeManager.currentTheme.textColor)
+                    Image(systemName: "gear")
+                    Text("Settings")
                 }
         }
         .background(themeManager.currentTheme.backgroundColor)
     }
 }
 
-
 #Preview {
-    MainTabView()
-        .environmentObject(ThemeManager())
+    var isLoggedIn = true
+    MainTabView(isLoggedIn: .constant(isLoggedIn))  // Создаю привязку на основе глобальной переменной
+        .environmentObject(ThemeManager())  // Подключаю ThemeManager
 }
+
+

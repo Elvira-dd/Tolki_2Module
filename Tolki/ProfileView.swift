@@ -8,11 +8,18 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @Binding var isLoggedIn: Bool  // Ссылка на состояние авторизации
     @EnvironmentObject var themeManager: ThemeManager
-    @State private var user: UserProfile = UserProfile(firstName: "John", lastName: "Doe", email: "john.doe@example.com", avatar: UIImage(named: "avatar_placeholder"))
+    @State private var user: UserProfile = UserProfile(
+        firstName: "John",
+        lastName: "Doe",
+        email: "john.doe@example.com",
+        avatar: UIImage(named: "avatar_placeholder")
+    )
     @State private var isEditing: Bool = false
-    @State private var selectedImage: UIImage?
-    
+    @State private var selectedImage: UIImage?  // Добавляем состояние для выбранного изображения
+    @State private var navigateToContentView: Bool = false  // Флаг для перехода на ContentView
+
     var body: some View {
         NavigationView {
             VStack {
@@ -34,28 +41,54 @@ struct ProfileView: View {
                 
                 Text("\(user.firstName) \(user.lastName)")
                     .font(.largeTitle)
-                    .foregroundColor(themeManager.currentTheme.textColor)
                     .padding(.top, 20)
                 
                 Text(user.email)
                     .font(.subheadline)
-                    .foregroundColor(themeManager.currentTheme.textColor)
                     .padding(.top, 5)
                 
                 Spacer()
                 
-                Button("Edit Profile") {
+                Button(action: {
                     isEditing.toggle()
+                }) {
+                    Text("Edit Profile")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(width: 200, height: 50)
+                        .background(Color.blue)
+                        .cornerRadius(10)
                 }
-                .padding()
-                .foregroundColor(themeManager.currentTheme.buttonTextColor)
-                .background(themeManager.currentTheme.buttonColor)
-                .cornerRadius(8)
+                .sheet(isPresented: $isEditing) {
+                    EditProfileView(user: $user, selectedImage: $selectedImage) // Передаем selectedImage в EditProfileView
+                }
+                
+                Spacer()
+                
+                Button(action: {
+                    isLoggedIn = false  // Устанавливаем авторизацию в false, чтобы выйти из профиля
+                    navigateToContentView = true  // Активируем переход на ContentView
+                }) {
+                    Text("Log Out")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(width: 200, height: 50)
+                        .background(Color.red)
+                        .cornerRadius(10)
+                }
+                .padding(.top, 20)
+                
+                // NavigationLink с флагом для активации перехода
+                NavigationLink(destination: ContentView(), isActive: $navigateToContentView) {
+                    EmptyView()  // Скрытый элемент, который активирует редирект
+                }
             }
             .padding()
-            .background(themeManager.currentTheme.backgroundColor)
             .navigationBarTitle("Profile", displayMode: .inline)
         }
+        .background(themeManager.currentTheme.backgroundColor)
     }
 }
 

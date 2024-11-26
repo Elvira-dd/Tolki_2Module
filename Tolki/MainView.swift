@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MainView: View {
+    @EnvironmentObject var themeManager: ThemeManager
     @State private var cards: [Card] = [
         Card(title: "Card 1", description: "Description for card 1", tags: ["Tag1", "Tag2"]),
         Card(title: "Card 2", description: "Description for card 2", tags: ["Tag3"]),
@@ -18,14 +19,14 @@ struct MainView: View {
     @State private var showModal = false
     @State private var selectedTag: String = "All"
     @State private var searchText: String = ""
-
+    
     // Получаем уникальные теги из всех карточек
     var uniqueTags: [String] {
         var tags = cards.flatMap { $0.tags }
         tags.append("All")
         return Array(Set(tags)).sorted()
     }
-
+    
     // Фильтрация карточек по тегу и поисковому запросу
     var filteredCards: [Card] {
         let filteredByTag = selectedTag == "All" ? cards : cards.filter { $0.tags.contains(selectedTag) }
@@ -37,46 +38,55 @@ struct MainView: View {
             }
         }
     }
-
+    
     var body: some View {
         NavigationView {
-            VStack {
-                // Селектор фильтра по тегам
-                Picker("Filter by Tag", selection: $selectedTag) {
-                    ForEach(uniqueTags, id: \.self) { tag in
-                        Text(tag).tag(tag)
+            ZStack {
+                // Задаем фон для всего экрана
+                themeManager.currentTheme.backgroundColor
+                    .edgesIgnoringSafeArea(.all)
+                VStack {
+                    Picker("Filter by Tag", selection: $selectedTag) {
+                        ForEach(uniqueTags, id: \.self) { tag in
+                            Text(tag).tag(tag)
+                        }
                     }
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .padding()
-
-                // Поле поиска
-                TextField("Search", text: $searchText)
+                    .pickerStyle(SegmentedPickerStyle())
                     .padding()
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(10)
-                    .padding(.horizontal)
-
-                // Список карточек
-                List {
-                    ForEach(filteredCards) { card in
-                        CardView(card: card)
-                            .onTapGesture {
-                                // Открытие подробного просмотра карточки
-                            }
+                    
+                    // Поле поиска
+                    TextField("Search", text: $searchText)
+                        .padding()
+                        .foregroundColor(themeManager.currentTheme.textColor)  // Цвет текста
+                        .background(themeManager.currentTheme.buttonColor)  // Цвет фона
+                        .cornerRadius(10)
+                        .padding(.horizontal)
+                    
+                    // Список карточек
+                    List {
+                        ForEach(filteredCards) { card in
+                            CardView(card: card)
+                                .onTapGesture {
+                                    // Открытие подробного просмотра карточки
+                                }
+                        }
+                        .onDelete(perform: deleteCard)
                     }
-                    .onDelete(perform: deleteCard)
+                    .listStyle(PlainListStyle())
                 }
-                .listStyle(PlainListStyle())
-            }
-            .navigationBarTitle("Cards")
-            .navigationBarItems(trailing: Button(action: {
-                showModal.toggle()
-            }) {
-                Image(systemName: "plus")
-            })
-            .sheet(isPresented: $showModal) {
-                AddCardView(cards: $cards)
+                .navigationBarTitle("Cards")
+                .foregroundColor(themeManager.currentTheme.textColor)
+                .navigationBarItems(trailing: Button(action: {
+                    showModal.toggle()
+                    
+                }) {
+                    Image(systemName: "plus")
+                        
+                        .foregroundColor(themeManager.currentTheme.textColor)
+                })
+                .sheet(isPresented: $showModal) {
+                    AddCardView(cards: $cards)
+                }
             }
         }
     }
@@ -87,6 +97,9 @@ struct MainView: View {
     }
 }
 
+
 #Preview {
     MainView()
+        .environmentObject(ThemeManager())
+    
 }

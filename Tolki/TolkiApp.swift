@@ -10,21 +10,25 @@ import SwiftUI
 @main
 struct MyApp: App {
     @AppStorage("isLoggedIn") var isLoggedIn: Bool = false  // Состояние авторизации
-    @StateObject var themeManager = ThemeManager()
-    
+    @StateObject var themeManager = ThemeManager()  // Инициализируем менеджер тем
+
     var body: some Scene {
         WindowGroup {
             if isLoggedIn {
-                MainTabView()  // Показываем основной экран, если пользователь авторизован
-                .environmentObject(themeManager)
+                MainTabView(isLoggedIn: $isLoggedIn)  // Передаем isLoggedIn как Binding
+                    .environmentObject(themeManager)
             } else {
-                ContentView()  // Показываем экран контента (онбординг или вход)
-                .environmentObject(themeManager)
+                ContentView()
+                    .environmentObject(themeManager)
+            
             }
         }
     }
 }
 
 #Preview {
-    MainTabView()
+    ContentView()
+        .environmentObject(ThemeManager())
+    
 }
+

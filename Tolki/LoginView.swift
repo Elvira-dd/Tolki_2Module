@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+ 
 struct LoginView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @Binding var isLoggedIn: Bool
@@ -14,29 +14,45 @@ struct LoginView: View {
     @State private var password = ""
     
     var body: some View {
-        VStack {
-            TextField("Введите email", text: $email)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding()
-                .foregroundColor(themeManager.currentTheme.textColor)
-            SecureField("Введите пароль", text: $password)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding()
-                .foregroundColor(themeManager.currentTheme.textColor)
+        ZStack {
+            // Задаем фон для всего экрана
+            themeManager.currentTheme.backgroundColor
+                .edgesIgnoringSafeArea(.all)
             
-            Button("Войти") {
-                if email == "1234@example.com" && password == "123456" {
-                    isLoggedIn = true
-                } else {
-                    print("Неверные данные")
+            VStack {
+                Text("Вход")
+                    .font(.largeTitle)
+                    .foregroundColor(themeManager.currentTheme.textColor)  // Цвет текста
+
+                TextField("Введите email", text: $email)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding()
+                
+                SecureField("Введите пароль", text: $password)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding()
+                
+                Button("Войти") {
+                    // Логика авторизации
+                    if email == "123@111.com" && password == "1234" {
+                        isLoggedIn = true  // Устанавливаем авторизацию
+                    } else {
+                        // Показываем ошибку авторизации
+                        print("Неверные данные")
+                    }
                 }
+                .padding()
+                .foregroundColor(themeManager.currentTheme.buttonTextColor)
+                .background(themeManager.currentTheme.buttonColor)
+                .cornerRadius(10)
             }
             .padding()
-            .foregroundColor(themeManager.currentTheme.buttonTextColor)
-            .background(themeManager.currentTheme.buttonColor)
-            .cornerRadius(8)
         }
-        .padding()
-        .background(themeManager.currentTheme.backgroundColor)
     }
+}
+
+#Preview {
+    var isLoggedIn = true
+    LoginView(isLoggedIn: .constant(isLoggedIn))
+        .environmentObject(ThemeManager())  // Подключаем ThemeManager
 }

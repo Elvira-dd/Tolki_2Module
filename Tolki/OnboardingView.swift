@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-
+ 
 // Модель данных для экрана онбординга
 struct OnboardingData: Identifiable, Hashable {
     var id = UUID()
@@ -18,6 +18,7 @@ struct OnboardingData: Identifiable, Hashable {
 
 // Представление одного экрана онбординга
 struct OnboardingView: View {
+    @EnvironmentObject var themeManager: ThemeManager
     var data: OnboardingData
 
     var body: some View {
@@ -30,12 +31,15 @@ struct OnboardingView: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .multilineTextAlignment(.center)
+                .foregroundColor(themeManager.currentTheme.textColor)
             Text(data.description)
                 .font(.body)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
+                .foregroundColor(themeManager.currentTheme.textColor)
         }
         .padding()
+        .background(themeManager.currentTheme.backgroundColor)
     }
 }
 

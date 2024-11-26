@@ -7,36 +7,35 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct CardView: View {
-    @EnvironmentObject var themeManager: ThemeManager // Подключение ThemeManager
     var card: Card
+    @EnvironmentObject var themeManager: ThemeManager
     
     var body: some View {
         VStack(alignment: .leading) {
             Text(card.title)
                 .font(.headline)
-                .foregroundColor(themeManager.currentTheme.textColor) // Установка цвета текста
+                .foregroundColor(themeManager.currentTheme.secondaryTextColor)  // Цвет текста
             Text(card.description)
                 .font(.subheadline)
                 .lineLimit(2)
-                .foregroundColor(themeManager.currentTheme.textColor) // Установка цвета текста
                 .padding(.top, 5)
+                .foregroundColor(themeManager.currentTheme.secondaryTextColor)  // Цвет текста
+            
             HStack {
                 ForEach(card.tags, id: \.self) { tag in
                     Text(tag)
                         .font(.caption)
                         .padding(5)
                         .background(Color.gray.opacity(0.2))
-                        .foregroundColor(themeManager.currentTheme.textColor) // Установка цвета текста
                         .cornerRadius(5)
+                        .foregroundColor(themeManager.currentTheme.textColor)  // Цвет текста для тегов
                 }
             }
             .padding(.top, 5)
         }
         .padding()
-        .background(themeManager.currentTheme.backgroundColor) // Установка фона
+        .background(themeManager.currentTheme.buttonColor)  // Цвет фона карточки
         .cornerRadius(10)
         .shadow(radius: 5)
     }
@@ -48,4 +47,10 @@ struct Card: Identifiable, Hashable {
     var title: String
     var description: String
     var tags: [String]
+}
+
+#Preview {
+    MainView()
+        .environmentObject(ThemeManager())
+    
 }
