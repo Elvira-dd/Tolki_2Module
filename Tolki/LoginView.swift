@@ -21,30 +21,42 @@ struct LoginView: View {
             
             VStack {
                 Text("Вход")
-                    .font(.largeTitle)
-                    .foregroundColor(themeManager.currentTheme.textColor)  // Цвет текста
+                    .headingTextStyle()
+                    .foregroundColor(themeManager.currentTheme.textColor)
 
                 TextField("Введите email", text: $email)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding(.horizontal, 16) // Горизонтальные отступы (внутренние)
+                    .padding(.vertical, 10)
+                    
+                    .background(themeManager.currentTheme.secondaryBackgroundColor)
+                    .cornerRadius(8)
                     .padding()
                 
                 SecureField("Введите пароль", text: $password)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding(.horizontal, 16) // Горизонтальные отступы (внутренние)
+                    .padding(.vertical, 10)
+                    .background(themeManager.currentTheme.secondaryBackgroundColor)
+                    .cornerRadius(8)
                     .padding()
                 
                 Button("Войти") {
                     // Логика авторизации
-                    if email == "123@111.com" && password == "1234" {
+                    if email == "1231111.ком" && password == "1234" {
                         isLoggedIn = true  // Устанавливаем авторизацию
+                        print("Вход успешен")
                     } else {
                         // Показываем ошибку авторизации
                         print("Неверные данные")
                     }
                 }
-                .padding()
+                .buttonTextStyle()
+                .padding(.horizontal, 48) // Горизонтальные отступы (внутренние)
+                .padding(.vertical, 10)
                 .foregroundColor(themeManager.currentTheme.buttonTextColor)
                 .background(themeManager.currentTheme.buttonColor)
-                .cornerRadius(10)
+                .cornerRadius(8)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .padding()
             }
             .padding()
         }

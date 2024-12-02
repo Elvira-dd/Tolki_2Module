@@ -23,6 +23,7 @@ struct ContentView: View {
                             .tag(index)
                     }
                 }
+                .foregroundColor(themeManager.currentTheme.buttonTextColor)
                 .tabViewStyle(PageTabViewStyle())
                 .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
                 
@@ -31,6 +32,7 @@ struct ContentView: View {
                         Button("Назад") {
                             currentPage -= 1
                         }
+                        .foregroundColor(themeManager.currentTheme.buttonTextColor)
                         .padding(.horizontal)
                     }
                     
@@ -40,11 +42,13 @@ struct ContentView: View {
                         Button("Далее") {
                             currentPage += 1
                         }
+                        .foregroundColor(themeManager.currentTheme.buttonTextColor)
                         .padding(.horizontal)
                     } else {
                         Button("Начать") {
                             hasOnboarded = true  // Переход к экрану авторизации
                         }
+                        .foregroundColor(themeManager.currentTheme.buttonTextColor)
                         .padding(.horizontal)
                     }
                 }

@@ -21,76 +21,78 @@ struct ProfileView: View {
     @State private var navigateToContentView: Bool = false  // Флаг для перехода на ContentView
 
     var body: some View {
-        NavigationView {
-            VStack {
-                if let avatar = user.avatar {
-                    Image(uiImage: avatar)
-                        .resizable()
-                        .frame(width: 100, height: 100)
-                        .clipShape(Circle())
-                        .overlay(Circle().stroke(Color.white, lineWidth: 4))
-                        .shadow(radius: 10)
-                } else {
-                    Image(systemName: "person.circle.fill")
-                        .resizable()
-                        .frame(width: 100, height: 100)
-                        .clipShape(Circle())
-                        .overlay(Circle().stroke(Color.white, lineWidth: 4))
-                        .shadow(radius: 10)
-                }
-                
-                Text("\(user.firstName) \(user.lastName)")
-                    .font(.largeTitle)
+                VStack {
+                    if let avatar = user.avatar {
+                        Image(uiImage: avatar)
+                            .resizable()
+                            .frame(width: 100, height: 100)
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.white, lineWidth: 4))
+                            .shadow(radius: 10)
+                    } else {
+                        Image(systemName: "person.circle.fill")
+                            .resizable()
+                            .frame(width: 100, height: 100)
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.white, lineWidth: 4))
+                            .shadow(radius: 10)
+                    }
+
+                    Text("\(user.firstName) \(user.lastName)")
+                        .headingTextStyle()
+                        .padding(.top, 20)
+
+                    Text(user.email)
+                        .padding(.top, 5)
+
+                    Spacer()
+
+                    Button(action: {
+                        isEditing.toggle()
+                    }) {
+                        Text("Edit Profile")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(width: 200, height: 50)
+                            .background(Color.blue)
+                            .cornerRadius(10)
+                    }
+                    .sheet(isPresented: $isEditing) {
+                        EditProfileView(user: $user, selectedImage: $selectedImage) // Передаем selectedImage в EditProfileView
+                    }
+
+
+                    Button(action: {
+                        isLoggedIn = false  // Устанавливаем авторизацию в false, чтобы выйти из профиля
+                        navigateToContentView = true  // Активируем переход на ContentView
+                    }) {
+                        Text("Log Out")
+                            .font(.headline)
+                            .foregroundColor(themeManager.currentTheme.textColor)
+                            .padding()
+                            .frame(width: 200, height: 50)
+                            .background(themeManager.currentTheme.secondaryBackgroundColor)
+                            .cornerRadius(10)
+                    }
                     .padding(.top, 20)
-                
-                Text(user.email)
-                    .font(.subheadline)
-                    .padding(.top, 5)
-                
-                Spacer()
-                
-                Button(action: {
-                    isEditing.toggle()
-                }) {
-                    Text("Edit Profile")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .frame(width: 200, height: 50)
-                        .background(Color.blue)
-                        .cornerRadius(10)
+
+                    // NavigationLink с флагом для активации перехода
+                    NavigationLink(destination: ContentView(), isActive: $navigateToContentView) {
+                        EmptyView()  // Скрытый элемент, который активирует редирект
+                        
+                    }
                 }
-                .sheet(isPresented: $isEditing) {
-                    EditProfileView(user: $user, selectedImage: $selectedImage) // Передаем selectedImage в EditProfileView
-                }
+                .padding()
+                .containerRelativeFrame([.horizontal, .vertical])
+                .background(themeManager.currentTheme.backgroundColor)
                 
-                Spacer()
                 
-                Button(action: {
-                    isLoggedIn = false  // Устанавливаем авторизацию в false, чтобы выйти из профиля
-                    navigateToContentView = true  // Активируем переход на ContentView
-                }) {
-                    Text("Log Out")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .frame(width: 200, height: 50)
-                        .background(Color.red)
-                        .cornerRadius(10)
-                }
-                .padding(.top, 20)
-                
-                // NavigationLink с флагом для активации перехода
-                NavigationLink(destination: ContentView(), isActive: $navigateToContentView) {
-                    EmptyView()  // Скрытый элемент, который активирует редирект
-                }
             }
-            .padding()
-            .navigationBarTitle("Profile", displayMode: .inline)
+    
         }
-        .background(themeManager.currentTheme.backgroundColor)
-    }
-}
+
+
 
 struct UserProfile: Identifiable {
     var id = UUID()
@@ -98,4 +100,10 @@ struct UserProfile: Identifiable {
     var lastName: String
     var email: String
     var avatar: UIImage?
+}
+
+#Preview {
+    var isLoggedIn = true
+    ProfileView(isLoggedIn: .constant(isLoggedIn))
+        .environmentObject(ThemeManager())
 }

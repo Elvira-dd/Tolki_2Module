@@ -14,33 +14,29 @@ struct Theme {
     var buttonColor: Color
     var buttonTextColor: Color
     var secondaryTextColor: Color
+    var secondaryBackgroundColor: Color
 }
 
 // набор доступных тем
 struct Themes {
     static let light = Theme(
-        backgroundColor: Color.white,
-        textColor: Color.black,
-        buttonColor: Color.blue,
-        buttonTextColor: Color.white,
-        secondaryTextColor: Color.black
+        backgroundColor: Color("MainLight"),
+        textColor: Color("Dark"),
+        buttonColor: Color("MainGreen"),
+        buttonTextColor: Color("Dark"),
+        secondaryTextColor: Color("Dark"),
+        secondaryBackgroundColor: Color("White")
     )
 
     static let dark = Theme(
         backgroundColor: Color.black,
-        textColor: Color.white,
+        textColor: Color("MainLight"),
         buttonColor: Color.gray,
         buttonTextColor: Color.black,
-        secondaryTextColor: Color.white
+        secondaryTextColor: Color("MainLight"),
+        secondaryBackgroundColor: Color("MainLight")
     )
 
-    static let blue = Theme(
-        backgroundColor: Color.blue.opacity(0.1),
-        textColor: Color.blue,
-        buttonColor: Color.blue,
-        buttonTextColor: Color.white,
-        secondaryTextColor: Color.blue
-    )
 }
 
 // менеджер тем
@@ -52,8 +48,6 @@ class ThemeManager: ObservableObject {
                 currentTheme = Themes.light
             case "dark":
                 currentTheme = Themes.dark
-            case "blue":
-                currentTheme = Themes.blue
             default:
                 currentTheme = Themes.light
             }
@@ -68,8 +62,6 @@ class ThemeManager: ObservableObject {
             currentTheme = Themes.light
         case "dark":
             currentTheme = Themes.dark
-        case "blue":
-            currentTheme = Themes.blue
         default:
             currentTheme = Themes.light
         }

@@ -18,7 +18,8 @@ struct CardView: View {
                 .foregroundColor(themeManager.currentTheme.secondaryTextColor)  // Цвет текста
             Text(card.description)
                 .font(.subheadline)
-                .lineLimit(2)
+                .lineLimit(3)
+                .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 5)
                 .foregroundColor(themeManager.currentTheme.secondaryTextColor)  // Цвет текста
             
@@ -29,16 +30,18 @@ struct CardView: View {
                         .padding(5)
                         .background(Color.gray.opacity(0.2))
                         .cornerRadius(5)
-                        .foregroundColor(themeManager.currentTheme.textColor)  // Цвет текста для тегов
+                        .foregroundColor(themeManager.currentTheme.textColor)
+                        .background(themeManager.currentTheme.buttonColor)
                 }
             }
             .padding(.top, 5)
         }
         .padding()
-        .background(themeManager.currentTheme.buttonColor)  // Цвет фона карточки
+        .background(themeManager.currentTheme.secondaryBackgroundColor)  // Цвет фона карточки
         .cornerRadius(10)
         .shadow(radius: 5)
     }
+        
 }
 
 

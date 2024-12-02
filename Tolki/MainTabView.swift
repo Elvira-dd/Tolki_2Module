@@ -7,9 +7,10 @@
 
 import SwiftUI
 
+
 struct MainTabView: View {
-    @Binding var isLoggedIn: Bool  // Ссылка на состояние авторизации
-    @EnvironmentObject var themeManager: ThemeManager  // Подключение ThemeManager как EnvironmentObject
+    @Binding var isLoggedIn: Bool
+    @EnvironmentObject var themeManager: ThemeManager
 
     var body: some View {
         TabView {
@@ -18,22 +19,24 @@ struct MainTabView: View {
                     Image(systemName: "list.bullet")
                     Text("Cards")
                 }
-            
+
             ProfileView(isLoggedIn: $isLoggedIn)
                 .tabItem {
                     Image(systemName: "person.circle")
                     Text("Profile")
                 }
-            
+
             SettingsView()
                 .tabItem {
                     Image(systemName: "gear")
                     Text("Settings")
                 }
         }
-        .background(themeManager.currentTheme.backgroundColor)
+        .background(themeManager.currentTheme.backgroundColor)  // Фон для всего TabView
+        .ignoresSafeArea()  // Игнорируем безопасную зону, чтобы фон был полностью на экране
     }
 }
+
 
 #Preview {
     var isLoggedIn = true

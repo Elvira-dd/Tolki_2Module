@@ -10,11 +10,16 @@ import SwiftUI
 struct MainView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @State private var cards: [Card] = [
-        Card(title: "Card 1", description: "Description for card 1", tags: ["Tag1", "Tag2"]),
-        Card(title: "Card 2", description: "Description for card 2", tags: ["Tag3"]),
-        Card(title: "Card 3", description: "Description for card 3", tags: ["Tag1"]),
-        Card(title: "Card 4", description: "Description for card 4", tags: ["Tag2", "Tag3"]),
-        Card(title: "Card 5", description: "Description for card 5", tags: ["Tag5", "Tag3"])
+        Card(title: "Card 1", description: "Description for card 1. This is the most recognasyble podcast", tags: ["Tag1", "Tag2"]),
+        Card(title: "Card 2", description: "Description for card 2. This is the most recognasyble podcast", tags: ["Tag3"]),
+        Card(title: "Card 3", description: "Description for card 3. This is the most recognasyble podcast", tags: ["Tag1"]),
+        Card(title: "Card 4", description: "Description for card 4. This is the most recognasyble podcast", tags: ["Tag2", "Tag3"]),
+        Card(title: "Card 5", description: "Description for card 2. This is the most recognasyble podcast", tags: ["Tag5", "Tag3"]),
+        Card(title: "Card 5", description: "Description for card 2. This is the most recognasyble podcast", tags: ["Tag5", "Tag3"]),
+        Card(title: "Card 5", description: "Description for card 2. This is the most recognasyble podcast", tags: ["Tag5", "Tag3"]),
+        Card(title: "Card 5", description: "Description for card 2. This is the most recognasyble podcast", tags: ["Tag5", "Tag3"]),
+        Card(title: "Card 5", description: "Description for card 2. This is the most recognasyble podcast", tags: ["Tag5", "Tag3"]),
+        Card(title: "Card 5", description: "Description for card 2. This is the most recognasyble podcast", tags: ["Tag5", "Tag3"]),
     ]
     @State private var showModal = false
     @State private var selectedTag: String = "All"
@@ -39,6 +44,9 @@ struct MainView: View {
         }
     }
     
+    // Два столбца для сетки
+    let columns = [GridItem(.flexible()), GridItem(.flexible())]
+
     var body: some View {
         NavigationView {
             ZStack {
@@ -49,8 +57,10 @@ struct MainView: View {
                     Picker("Filter by Tag", selection: $selectedTag) {
                         ForEach(uniqueTags, id: \.self) { tag in
                             Text(tag).tag(tag)
+                            
                         }
                     }
+                    
                     .pickerStyle(SegmentedPickerStyle())
                     .padding()
                     
@@ -58,30 +68,32 @@ struct MainView: View {
                     TextField("Search", text: $searchText)
                         .padding()
                         .foregroundColor(themeManager.currentTheme.textColor)  // Цвет текста
-                        .background(themeManager.currentTheme.buttonColor)  // Цвет фона
+                        .background(themeManager.currentTheme.secondaryBackgroundColor)  // Цвет фона
                         .cornerRadius(10)
                         .padding(.horizontal)
+                        .padding(.bottom, 20)
                     
-                    // Список карточек
-                    List {
-                        ForEach(filteredCards) { card in
-                            CardView(card: card)
-                                .onTapGesture {
-                                    // Открытие подробного просмотра карточки
-                                }
+                    // Сетка для карточек
+                    ScrollView {
+                        LazyVGrid(columns: columns, spacing: 20) {
+                            ForEach(filteredCards) { card in
+                                CardView(card: card)
+                                    .onTapGesture {
+                                        // Открытие подробного просмотра карточки
+                                    }
+                            }
                         }
-                        .onDelete(perform: deleteCard)
+                        .padding(.horizontal)
                     }
-                    .listStyle(PlainListStyle())
+                    .background(themeManager.currentTheme.backgroundColor)
                 }
                 .navigationBarTitle("Cards")
                 .foregroundColor(themeManager.currentTheme.textColor)
+                .background(themeManager.currentTheme.backgroundColor)
                 .navigationBarItems(trailing: Button(action: {
                     showModal.toggle()
-                    
                 }) {
                     Image(systemName: "plus")
-                        
                         .foregroundColor(themeManager.currentTheme.textColor)
                 })
                 .sheet(isPresented: $showModal) {
@@ -97,9 +109,7 @@ struct MainView: View {
     }
 }
 
-
 #Preview {
     MainView()
         .environmentObject(ThemeManager())
-    
 }

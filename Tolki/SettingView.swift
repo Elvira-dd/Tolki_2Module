@@ -11,40 +11,45 @@ struct SettingsView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @State private var showFeedback = false
     @State private var showAbout = false
-
     var body: some View {
-        NavigationView {
-            Form {
-                Section(header: Text("Select Theme")) {
-                    ThemeSelectionRow(themeName: "Light", isSelected: themeManager.selectedTheme == "light") {
-                        themeManager.selectedTheme = "light"
-                    }
-                    ThemeSelectionRow(themeName: "Dark", isSelected: themeManager.selectedTheme == "dark") {
-                        themeManager.selectedTheme = "dark"
-                    }
-                    ThemeSelectionRow(themeName: "Blue", isSelected: themeManager.selectedTheme == "blue") {
-                        themeManager.selectedTheme = "blue"
-                    }
-                }
-                
-                Section(header: Text("Information")) {
-                    Button(action: { showFeedback.toggle() }) {
-                        Text("Feedback")
-                    }
-                    .sheet(isPresented: $showFeedback) {
-                        FeedbackView()
+        VStack {
+            Text("Настройки")
+                .headingTextStyle()
+                Form {
+                    Section(header: Text("Select Theme")) {
+                        ThemeSelectionRow(themeName: "Light", isSelected: themeManager.selectedTheme == "light") {
+                            themeManager.selectedTheme = "light"
+                        }
+                        ThemeSelectionRow(themeName: "Dark", isSelected: themeManager.selectedTheme == "dark") {
+                            themeManager.selectedTheme = "dark"
+                        }
                     }
                     
-                    Button(action: { showAbout.toggle() }) {
-                        Text("About")
+                    
+                    Section(header: Text("Information")) {
+                        Button(action: { showFeedback.toggle() }) {
+                            Text("Feedback")
+                        }
+                        .sheet(isPresented: $showFeedback) {
+                            FeedbackView()
+                        }
+                        
+                        Button(action: { showAbout.toggle() }) {
+                            Text("About")
+                        }
+                        .sheet(isPresented: $showAbout) {
+                            AboutView()
+                        }
                     }
-                    .sheet(isPresented: $showAbout) {
-                        AboutView()
-                    }
+                    
                 }
-            }
-            .navigationBarTitle("Settings")
+                .scrollContentBackground(.hidden)
+
+            
         }
+        .containerRelativeFrame([.horizontal, .vertical])
+        .background(themeManager.currentTheme.backgroundColor)
+        
     }
 }
 
@@ -64,4 +69,9 @@ struct ThemeSelectionRow: View {
         .contentShape(Rectangle())
         .onTapGesture(perform: action)
     }
+}
+
+#Preview {
+    SettingsView()
+        .environmentObject(ThemeManager())
 }
