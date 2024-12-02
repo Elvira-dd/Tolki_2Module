@@ -9,32 +9,21 @@ import SwiftUI
 
 struct MainView: View {
     @EnvironmentObject var themeManager: ThemeManager
-    @State private var cards: [Card] = [
-        Card(title: "Card 1", description: "Description for card 1. This is the most recognasyble podcast", tags: ["Tag1", "Tag2"]),
-        Card(title: "Card 2", description: "Description for card 2. This is the most recognasyble podcast", tags: ["Tag3"]),
-        Card(title: "Card 3", description: "Description for card 3. This is the most recognasyble podcast", tags: ["Tag1"]),
-        Card(title: "Card 4", description: "Description for card 4. This is the most recognasyble podcast", tags: ["Tag2", "Tag3"]),
-        Card(title: "Card 5", description: "Description for card 2. This is the most recognasyble podcast", tags: ["Tag5", "Tag3"]),
-        Card(title: "Card 5", description: "Description for card 2. This is the most recognasyble podcast", tags: ["Tag5", "Tag3"]),
-        Card(title: "Card 5", description: "Description for card 2. This is the most recognasyble podcast", tags: ["Tag5", "Tag3"]),
-        Card(title: "Card 5", description: "Description for card 2. This is the most recognasyble podcast", tags: ["Tag5", "Tag3"]),
-        Card(title: "Card 5", description: "Description for card 2. This is the most recognasyble podcast", tags: ["Tag5", "Tag3"]),
-        Card(title: "Card 5", description: "Description for card 2. This is the most recognasyble podcast", tags: ["Tag5", "Tag3"]),
-    ]
+    @State private var posts: [Post] = load("postsData.json")
     @State private var showModal = false
     @State private var selectedTag: String = "All"
     @State private var searchText: String = ""
     
     // Получаем уникальные теги из всех карточек
     var uniqueTags: [String] {
-        var tags = cards.flatMap { $0.tags }
+        var tags = posts.flatMap { $0.tags }
         tags.append("All")
         return Array(Set(tags)).sorted()
     }
     
     // Фильтрация карточек по тегу и поисковому запросу
-    var filteredCards: [Card] {
-        let filteredByTag = selectedTag == "All" ? cards : cards.filter { $0.tags.contains(selectedTag) }
+    var filteredPosts: [Post] {
+        let filteredByTag = selectedTag == "All" ? posts : posts.filter { $0.tags.contains(selectedTag) }
         if searchText.isEmpty {
             return filteredByTag
         } else {
@@ -76,11 +65,43 @@ struct MainView: View {
                     // Сетка для карточек
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: 20) {
-                            ForEach(filteredCards) { card in
-                                CardView(card: card)
-                                    .onTapGesture {
-                                        // Открытие подробного просмотра карточки
+                            ForEach(filteredPosts) { post in
+                                
+                                VStack(alignment: .leading) {
+                                    Text(post.title)
+                                        .font(.headline)
+                                        .foregroundColor(themeManager.currentTheme.secondaryTextColor)  // Цвет текста
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    Text(post.description)
+                                        .font(.subheadline)
+                                        .lineLimit(3)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                        .padding(.top, 5)
+                                        .foregroundColor(themeManager.currentTheme.secondaryTextColor)  // Цвет текста
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    
+                                    HStack {
+                                        ForEach(post.tags, id: \.self) { tag in
+                                            Text(tag)
+                                                .font(.caption)
+                                                .padding(5)
+                                                .background(Color.gray.opacity(0.2))
+                                                .cornerRadius(5)
+                                                .foregroundColor(themeManager.currentTheme.textColor)
+                                                .background(themeManager.currentTheme.buttonColor)
+                                        }
                                     }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.top, 5)
+                                }
+                                .frame(width: UIScreen.main.bounds.width / 2 - 60)
+                                
+                                .padding()
+                                .background(themeManager.currentTheme.secondaryBackgroundColor)  // Цвет фона карточки
+                                .cornerRadius(10)
+                                .shadow(radius: 5)
+                                    
+                                
                             }
                         }
                         .padding(.horizontal)
@@ -97,15 +118,15 @@ struct MainView: View {
                         .foregroundColor(themeManager.currentTheme.textColor)
                 })
                 .sheet(isPresented: $showModal) {
-                    AddCardView(cards: $cards)
+                    AddPostView(posts: $posts)
                 }
             }
         }
     }
 
     // Функция для удаления карточки
-    func deleteCard(at offsets: IndexSet) {
-        cards.remove(atOffsets: offsets)
+    mutating func deletePost(at offsets: IndexSet) {
+        posts.remove(atOffsets: offsets)
     }
 }
 

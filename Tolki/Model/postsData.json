@@ -1,0 +1,34 @@
+
+
+[
+    {
+        "id": 1001,
+        "title": "Toto",
+        "description": "Dog",
+        "tags": ["Friendly", "Playful"]
+    },
+    {
+        "id": 1002,
+        "title": "Betsy",
+        "description": "Cat",
+        "tags": ["Curious", "Indepent"]
+    },
+    {
+        "id": 1003,
+        "title": "Olive",
+        "description": "Tortoise",
+        "tags": ["Slow", "Calm"]
+    },
+    {
+        "id": 1004,
+        "title": "Jupiter",
+        "description": "Parrot",
+        "tags": ["Talkative", "Colorful"]
+    },
+    {
+        "id": 1005,
+        "title": "Ulysse",
+        "description": "Monkey",
+        "tags": ["Smart", "Playful"]
+    }
+]
