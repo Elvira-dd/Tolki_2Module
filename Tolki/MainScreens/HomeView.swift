@@ -11,19 +11,19 @@ struct HomeView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @State private var posts: [Post] = load("postsData.json")
     @State private var showModal = false
-    @State private var selectedTag: String = "All"
+    @State private var selectedTag: String = "Все"
     @State private var searchText: String = ""
     
     // Получаем уникальные теги из всех карточек
     var uniqueTags: [String] {
         var tags = posts.flatMap { $0.tags }
-        tags.append("All")
+        tags.append("Все")
         return Array(Set(tags)).sorted()
     }
     
     // Фильтрация карточек по тегу и поисковому запросу
     var filteredPosts: [Post] {
-        let filteredByTag = selectedTag == "All" ? posts : posts.filter { $0.tags.contains(selectedTag) }
+        let filteredByTag = selectedTag == "Все" ? posts : posts.filter { $0.tags.contains(selectedTag) }
         if searchText.isEmpty {
             return filteredByTag
         } else {
@@ -43,16 +43,24 @@ struct HomeView: View {
                 themeManager.currentTheme.backgroundColor
                     .edgesIgnoringSafeArea(.all)
                 VStack {
-                    Picker("Filter by Tag", selection: $selectedTag) {
-                        ForEach(uniqueTags, id: \.self) { tag in
-                            Text(tag).tag(tag)
-                            
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 10) {
+                            ForEach(uniqueTags, id: \.self) { tag in
+                                Text(tag)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(selectedTag == tag ? Color(themeManager.currentTheme.buttonColor) : Color(themeManager.currentTheme.secondaryBackgroundColor))
+                                    .foregroundColor(Color(themeManager.currentTheme.textColor))
+                                    .cornerRadius(10)
+                                    .onTapGesture {
+                                        selectedTag = tag
+                                    }
+                            }
                         }
+                        .padding()
                     }
-                    
-                    .pickerStyle(SegmentedPickerStyle())
-                    .padding()
-                    
+
+
                     // Поле поиска
                     TextField("Search", text: $searchText)
                         .padding()
@@ -74,7 +82,7 @@ struct HomeView: View {
                                         .frame(maxWidth: .infinity, alignment: .leading)
                                     Text(post.description)
                                         .font(.subheadline)
-                                        .lineLimit(3)
+                                        .lineLimit(2)
                                         .fixedSize(horizontal: false, vertical: true)
                                         .padding(.top, 5)
                                         .foregroundColor(themeManager.currentTheme.secondaryTextColor)  // Цвет текста
