@@ -14,7 +14,7 @@ struct MainTabView: View {
 
     var body: some View {
         TabView {
-            MainView()
+            HomeView()
                 .tabItem {
                     Image(systemName: "list.bullet")
                     Text("Cards")

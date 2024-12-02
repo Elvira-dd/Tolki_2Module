@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct MainView: View {
+struct HomeView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @State private var posts: [Post] = load("postsData.json")
     @State private var showModal = false
@@ -131,6 +131,6 @@ struct MainView: View {
 }
 
 #Preview {
-    MainView()
+    HomeView()
         .environmentObject(ThemeManager())
 }
