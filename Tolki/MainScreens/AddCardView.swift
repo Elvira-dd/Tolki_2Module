@@ -10,37 +10,56 @@ import SwiftUI
 struct AddPostView: View {
     @Binding var posts: [Post]
     @State private var title: String = ""
-    @State private var description: String = ""
-    @State private var tags: String = ""
+    @State private var text: String = ""
+    @State private var issue_name: String = ""
+    @State private var podcast_name: String = ""
+    @State private var hashtag: String = ""
+    @State private var user_name: String = "Ксения"
     
-    // Для закрытия модального окна
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Card Information")) {
+                Section(header: Text("Post Details")) {
                     TextField("Title", text: $title)
                         .autocapitalization(.words)
                         .disableAutocorrection(true)
                     
-                    TextField("Description", text: $description)
-                        .autocapitalization(.sentences)
+                    ZStack(alignment: .topLeading) {
+                        if text.isEmpty {
+                            Text("Text")
+                                .foregroundColor(.gray)
+                                .padding(.top, 8)
+                                .padding(.leading, 5)
+                        }
+                        TextEditor(text: $text)
+                            .autocapitalization(.sentences)
+                            .frame(height: 100)
+                            .padding(4)
+                    }
                     
-                    TextField("Tags (comma separated)", text: $tags)
+                    TextField("Issue Name", text: $issue_name)
+                        .autocapitalization(.none)
+                    
+                    TextField("Podcast Name", text: $podcast_name)
+                        .autocapitalization(.none)
+                    
+                    TextField("Hashtag", text: $hashtag)
                         .autocapitalization(.none)
                         .disableAutocorrection(true)
                 }
                 
                 Section {
                     Button(action: addPost) {
-                        Text("Add Card")
-                            .frame(maxWidth: .infinity, alignment: .center)
+                        Text("Add Post")
+                            .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
+                    .disabled(title.isEmpty || text.isEmpty)
                 }
             }
-            .navigationBarTitle("Add Card", displayMode: .inline)
+            .navigationBarTitle("Add Post", displayMode: .inline)
             .navigationBarItems(trailing: Button("Cancel") {
                 presentationMode.wrappedValue.dismiss()
             })
@@ -48,13 +67,21 @@ struct AddPostView: View {
     }
     
     private func addPost() {
-        let tagList = tags.split(separator: ",").map {
-            $0.trimmingCharacters(in: .whitespaces)
-        }
-        let newPost = Post(id: posts.count + 1, title: title, description: description, tags: tagList)
-        posts.append(newPost)
+        let predefinedTags = ["Мое", "Новое"]
+        let newPost = Post(
+            id: posts.count + 1,
+            title: title,
+            text: text,
+            user_name: user_name,
+            issue_name: issue_name,
+            podcast_name: podcast_name,
+            hashtag: hashtag,
+            tags: predefinedTags
+        )
         
-        // Закрыть модальное окно после добавления карточки
+        posts.append(newPost)
         presentationMode.wrappedValue.dismiss()
     }
 }
+
+
