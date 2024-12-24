@@ -11,9 +11,9 @@ struct ProfileView: View {
     @Binding var isLoggedIn: Bool  // Ссылка на состояние авторизации
     @EnvironmentObject var themeManager: ThemeManager
     @State private var user: UserProfile = UserProfile(
-        firstName: "John",
-        lastName: "Doe",
-        email: "john.doe@example.com",
+        firstName: "Ксения",
+        lastName: "Кириленко",
+        email: "kirilenko@yandex.ru",
         avatar: UIImage(named: "avatar_placeholder")
     )
     @State private var isEditing: Bool = false
@@ -39,6 +39,7 @@ struct ProfileView: View {
                     }
 
                     Text("\(user.firstName) \(user.lastName)")
+                        .multilineTextAlignment(.center)
                         .headingTextStyle()
                         .padding(.top, 20)
 
@@ -52,10 +53,10 @@ struct ProfileView: View {
                     }) {
                         Text("Edit Profile")
                             .font(.headline)
-                            .foregroundColor(.white)
+                            .foregroundColor(Color(themeManager.currentTheme.textColor))
                             .padding()
                             .frame(width: 200, height: 50)
-                            .background(Color.blue)
+                            .background(Color(themeManager.currentTheme.buttonColor))
                             .cornerRadius(10)
                     }
                     .sheet(isPresented: $isEditing) {

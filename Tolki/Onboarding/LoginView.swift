@@ -41,7 +41,7 @@ struct LoginView: View {
                 
                 Button("Войти") {
                     // Логика авторизации
-                    if email == "1231111.ком" && password == "1234" {
+                    if email == "kiri" && password == "1234" {
                         isLoggedIn = true  // Устанавливаем авторизацию
                         print("Вход успешен")
                     } else {

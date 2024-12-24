@@ -2,42 +2,54 @@
 //  PostDetailView.swift
 //  Tolki
 //
-//  Created by Эльвира on 03.12.2024.
+//  Created by Эльвира on 24.12.2024.
 //
+
 
 import SwiftUI
 
 struct PostDetailView: View {
-    var post: Post
-    @EnvironmentObject var themeManager: ThemeManager
+    let post: Posts
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            Text(post.title)
-                .font(.largeTitle)
-                .bold()
-                .foregroundColor(themeManager.currentTheme.textColor)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text(post.title)
+                    .font(.title)
+                    .bold()
 
-            Text(post.text)
-                .font(.body)
-                .foregroundColor(themeManager.currentTheme.secondaryTextColor)
-
-            HStack {
-                ForEach(post.tags, id: \.self) { tag in
-                    Text(tag)
-                        .font(.caption)
-                        .padding(5)
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(5)
-                        .foregroundColor(themeManager.currentTheme.textColor)
-                        .background(themeManager.currentTheme.buttonColor)
+                if let content = post.content {
+                    Text(content)
+                        .font(.body)
+                } else {
+                    Text("Контент отсутствует.")
+                        .font(.body)
+                        .foregroundColor(.gray)
                 }
-            }
 
-            Spacer() // Заполнить свободное пространство
+                if let comments = post.comments {
+                    Text("Комментарии (\(comments.count)):")
+                        .font(.headline)
+                        .padding(.top)
+
+                    ForEach(comments) { comment in
+                        Text(comment.content)
+                            .font(.body)
+                            .padding(10)
+                            .background(Color.gray.opacity(0.1))
+                            .cornerRadius(8)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                } else {
+                    Text("Комментарии недоступны.")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                }
+
+                Spacer()
+            }
+            .padding()
         }
-        .padding()
-        .background(themeManager.currentTheme.backgroundColor)
-        .navigationBarTitle("Детали", displayMode: .inline) // Заголовок с кнопкой "Назад"
+        .navigationTitle("Детали поста")
     }
 }
