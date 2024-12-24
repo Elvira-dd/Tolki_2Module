@@ -14,22 +14,33 @@ struct MainTabView: View {
 
     var body: some View {
         TabView {
-            PostsView()
+            MainView()
+                .tabItem {
+                    Image(systemName: "gear")
+                    Text("Главная")
+                }
+            
+            PodcastView()
                 .tabItem {
                     Image(systemName: "list.bullet")
-                    Text("Cards")
+                    Text("Подкасты")
                 }
-
+            CreatePostView()
+                .tabItem {
+                    Image(systemName: "plus")
+                    Text("Новый пост")
+                }
+            
             ProfileView(isLoggedIn: $isLoggedIn)
                 .tabItem {
                     Image(systemName: "person.circle")
-                    Text("Profile")
+                    Text("Профиль")
                 }
 
             SettingsView()
                 .tabItem {
                     Image(systemName: "gear")
-                    Text("Settings")
+                    Text("Настройки")
                 }
         }
         .background(themeManager.currentTheme.backgroundColor)  // Фон для всего TabView
