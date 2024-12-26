@@ -61,7 +61,6 @@ struct SectionView<Item: Hashable, Content: View>: View {
     }
 }
 
-// Секции
 struct NewsSectionView: View {
     let posts: [Posts]
 

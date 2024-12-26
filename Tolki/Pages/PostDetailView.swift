@@ -7,7 +7,6 @@
 
 
 import SwiftUI
-
 struct PostDetailView: View {
     let post: Posts
 
@@ -45,6 +44,14 @@ struct PostDetailView: View {
                         .font(.subheadline)
                         .foregroundColor(.gray)
                 }
+
+                // Отображение issueId
+                let issueId = post.issueId
+                    Text("Идентификатор выпуска: \(issueId)")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .padding(.top, 10)
+                
 
                 Spacer()
             }

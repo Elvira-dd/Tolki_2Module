@@ -9,15 +9,16 @@ import Foundation
 import Foundation
 
 struct Posts: Identifiable, Hashable, Codable {
-    var id: Int?
-    var title: String
-    var content: String?
-    var isCommentsOpen: Bool
-    var link: String
-    var hashtag: String
-    var createdAt: String?
-    var comments: [Comment]?
-
+    var id: Int
+        var title: String
+        var content: String?
+        var isCommentsOpen: Bool?
+        var link: String
+        var hashtag: String
+        var createdAt: String?
+        var comments: [Comment]?
+        var issueId: Int?
+    
     // Реализация hash(into:) для соответствия протоколу Hashable
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
@@ -39,6 +40,19 @@ struct Posts: Identifiable, Hashable, Codable {
                lhs.hashtag == rhs.hashtag &&
                lhs.createdAt == rhs.createdAt
     }
+    
+    // Сопоставление полей JSON с моделью
+    enum CodingKeys: String, CodingKey {
+           case id
+           case title
+           case content
+           case isCommentsOpen = "is_comments_open"
+           case link
+           case hashtag
+           case createdAt = "created_at"
+           case comments
+           case issueId = "issue_id"
+       }
 }
 
 struct Comment: Codable, Identifiable, Hashable {
@@ -61,5 +75,22 @@ struct Podcast: Codable, Identifiable, Hashable {
         case id, name, description, cover, url
         case createdAt = "created_at"
         case averageRating = "average_rating"
+    }
+}
+
+// Модель для выпусков (Issue)
+struct Issue: Codable, Identifiable {
+    let id: Int
+    let name: String
+    let link: String
+    let cover: String
+    let createdAt: String
+    let podcastId: Int
+    let url: String
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, link, cover, url
+        case createdAt = "created_at"
+        case podcastId = "podcast_id"
     }
 }
