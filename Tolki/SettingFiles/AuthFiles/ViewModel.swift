@@ -55,7 +55,7 @@ final class ViewModel: ObservableObject {
     }
 
     @Published var username: String = ""
-    @Published var gotToken: Bool = KeychainService().getString(forKey: Const.tokenKey)?.isEmpty == false
+    @Published var gotToken: Bool = false
 
     private var worker = AuthWorker()
     private var keychain = KeychainService()
