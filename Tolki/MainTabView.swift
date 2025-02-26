@@ -7,16 +7,14 @@
 
 import SwiftUI
 
-
 struct MainTabView: View {
-    @Binding var isLoggedIn: Bool
-    @EnvironmentObject var themeManager: ThemeManager
+ 
 
     var body: some View {
         TabView {
             MainView()
                 .tabItem {
-                    Image(systemName: "gear")
+                    Image(systemName: "house")
                     Text("Главная")
                 }
             
@@ -25,13 +23,14 @@ struct MainTabView: View {
                     Image(systemName: "list.bullet")
                     Text("Подкасты")
                 }
+            
             CreatePostView()
                 .tabItem {
                     Image(systemName: "plus")
                     Text("Новый пост")
                 }
             
-            ProfileView(isLoggedIn: $isLoggedIn)
+            ProfileView()
                 .tabItem {
                     Image(systemName: "person.circle")
                     Text("Профиль")
@@ -43,16 +42,12 @@ struct MainTabView: View {
                     Text("Настройки")
                 }
         }
-        .background(themeManager.currentTheme.backgroundColor)  // Фон для всего TabView
-        .ignoresSafeArea()  // Игнорируем безопасную зону, чтобы фон был полностью на экране
+        .background(Color.background)
+        .ignoresSafeArea()
     }
 }
 
-
 #Preview {
-    var isLoggedIn = true
-    MainTabView(isLoggedIn: .constant(isLoggedIn))  // Создаю привязку на основе глобальной переменной
-        .environmentObject(ThemeManager())  // Подключаю ThemeManager
+   
+    MainTabView()
 }
-
-

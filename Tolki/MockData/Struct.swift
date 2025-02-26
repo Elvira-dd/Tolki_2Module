@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Foundation
 
 struct Posts: Identifiable, Hashable, Codable {
     var id: Int
@@ -92,5 +91,31 @@ struct Issue: Codable, Identifiable {
         case id, name, link, cover, url
         case createdAt = "created_at"
         case podcastId = "podcast_id"
+    }
+}
+
+struct ThemeTag: Codable, Identifiable, Hashable {
+    let id: Int
+    let name: String
+    let description: String
+    let cover: String
+    let createdAt: String
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, description, cover
+        case createdAt = "created_at"
+    }
+}
+
+struct Profile: Codable, Identifiable, Hashable {
+    let id: Int
+    let name: String
+    let bio: String
+    let avatar: String
+    let level: String
+    let email: String // Email пользователя
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, bio, avatar, level, email
     }
 }

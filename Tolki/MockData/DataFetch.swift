@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-// Загружаю данные
 import Foundation
 
 class DataFetcher: ObservableObject {
@@ -67,6 +66,58 @@ class PodcastFetcher: ObservableObject {
                 }
             } else if let error = error {
                 print("Network error (issues):", error)
+            }
+        }.resume()
+    }
+}
+
+class ThemeFetcher: ObservableObject {
+    @Published var themes: [ThemeTag] = []
+
+    func fetchThemes() {
+        guard let url = URL(string: "http://localhost:3000/api/v1/themes") else { return }
+        
+        URLSession.shared.dataTask(with: url) { data, _, error in
+            if let data = data {
+                do {
+                    let decoder = JSONDecoder()
+                    decoder.keyDecodingStrategy = .convertFromSnakeCase
+                    let fetchedThemes = try decoder.decode([ThemeTag].self, from: data)
+                    
+                    DispatchQueue.main.async {
+                        self.themes = fetchedThemes
+                    }
+                } catch {
+                    print("Ошибка декодирования тем: \(error)")
+                }
+            } else if let error = error {
+                print("Ошибка сети (темы): \(error)")
+            }
+        }.resume()
+    }
+}
+
+class ProfileFetcher: ObservableObject {
+    @Published var profiles: [Profile] = []
+
+    func fetchProfiles() {
+        guard let url = URL(string: "http://localhost:3000/api/v1/profiles") else { return }
+        
+        URLSession.shared.dataTask(with: url) { data, _, error in
+            if let data = data {
+                do {
+                    let decoder = JSONDecoder()
+                    decoder.keyDecodingStrategy = .convertFromSnakeCase
+                    let fetchedProfiles = try decoder.decode([Profile].self, from: data)
+                    
+                    DispatchQueue.main.async {
+                        self.profiles = fetchedProfiles
+                    }
+                } catch {
+                    print("Ошибка декодирования профилей: \(error)")
+                }
+            } else if let error = error {
+                print("Ошибка сети (профили): \(error)")
             }
         }.resume()
     }

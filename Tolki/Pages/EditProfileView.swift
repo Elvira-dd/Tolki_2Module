@@ -15,7 +15,6 @@ struct EditProfileView: View {
     @State private var email: String = ""
     @State private var showImagePicker: Bool = false
     @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject var themeManager: ThemeManager
     
     var body: some View {
         NavigationView {
@@ -71,6 +70,6 @@ struct EditProfileView: View {
                 ImagePicker(image: $selectedImage)
             }
         }
-        .background(themeManager.currentTheme.backgroundColor)
+        .background(Color.background)
     }
 }

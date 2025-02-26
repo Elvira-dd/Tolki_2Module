@@ -8,52 +8,43 @@
 import SwiftUI
  
 struct LoginView: View {
-    @EnvironmentObject var themeManager: ThemeManager
-    @Binding var isLoggedIn: Bool
+  
     @State private var email = ""
     @State private var password = ""
     
     var body: some View {
         ZStack {
             // Задаем фон для всего экрана
-            themeManager.currentTheme.backgroundColor
+            Color(.systemBackground)
                 .edgesIgnoringSafeArea(.all)
             
             VStack {
                 Text("Вход")
                     .headingTextStyle()
-                    .foregroundColor(themeManager.currentTheme.textColor)
+                    .foregroundColor(Color.primary)
 
                 TextField("Введите email", text: $email)
-                    .padding(.horizontal, 16) // Горизонтальные отступы (внутренние)
+                    .padding(.horizontal, 16)
                     .padding(.vertical, 10)
-                    
-                    .background(themeManager.currentTheme.secondaryBackgroundColor)
+                    .background(Color.secondary)
                     .cornerRadius(8)
                     .padding()
                 
                 SecureField("Введите пароль", text: $password)
-                    .padding(.horizontal, 16) // Горизонтальные отступы (внутренние)
+                    .padding(.horizontal, 16)
                     .padding(.vertical, 10)
-                    .background(themeManager.currentTheme.secondaryBackgroundColor)
+                    .background(Color.secondary)
                     .cornerRadius(8)
                     .padding()
                 
                 Button("Войти") {
-                    // Логика авторизации
-                    if email == "kiri" && password == "1234" {
-                        isLoggedIn = true  // Устанавливаем авторизацию
-                        print("Вход успешен")
-                    } else {
-                        // Показываем ошибку авторизации
-                        print("Неверные данные")
-                    }
+                   
                 }
                 .buttonTextStyle()
-                .padding(.horizontal, 48) // Горизонтальные отступы (внутренние)
+                .padding(.horizontal, 48)
                 .padding(.vertical, 10)
-                .foregroundColor(themeManager.currentTheme.buttonTextColor)
-                .background(themeManager.currentTheme.buttonColor)
+                .foregroundColor(Color.white)
+                .background(Color.blue)
                 .cornerRadius(8)
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .padding()
@@ -64,7 +55,6 @@ struct LoginView: View {
 }
 
 #Preview {
-    var isLoggedIn = true
-    LoginView(isLoggedIn: .constant(isLoggedIn))
-        .environmentObject(ThemeManager())  // Подключаем ThemeManager
+
+    LoginView()
 }
