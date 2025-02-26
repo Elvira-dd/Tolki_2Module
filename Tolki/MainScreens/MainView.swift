@@ -1,7 +1,5 @@
 import SwiftUI
 
-
-
 struct MainView: View {
     @StateObject var dataFetcher = PodcastFetcher() // Инициализируем PodcastFetcher
     @State private var selectedTab = 0
@@ -9,21 +7,20 @@ struct MainView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                // Верхний переключатель
                 HStack {
                     Text("главная")
-                        .foregroundColor(selectedTab == 0 ? Color.green : Color.gray) // Заменяем цвета на стандартные
+                        .foregroundColor(selectedTab == 0 ? Color(.mainGreen) : Color(.mainLight2))
                         .onTapGesture { selectedTab = 0 }
                     
                     Text("рекомендации")
-                        .foregroundColor(selectedTab == 1 ? Color.green : Color.gray) // Заменяем цвета на стандартные
+                        .foregroundColor(selectedTab == 1 ? Color(.mainGreen) : Color(.mainLight2))
                         .onTapGesture { selectedTab = 1 }
                 }
                 .padding()
                 .frame(maxWidth: .infinity)
+                .background(Color(.background)) // Устанавливаем черный фон для заголовка
                 
                 // Контент с Spacer() для правильного размещения
-                Spacer()
                 if selectedTab == 0 {
                     TopView()
                 } else {
@@ -31,16 +28,16 @@ struct MainView: View {
                 }
                 Spacer()
             }
-            .edgesIgnoringSafeArea(.all)
-            .background(Color(.systemBackground)) // Используем стандартный цвет фона
+            .padding(.top, 60) // Добавляем отступ сверху для расположения ниже динамического острова
         }
+        .edgesIgnoringSafeArea(.all)
+        .background(Color(.background)) // Устанавливаем черный фон для всего ScrollView
     }
 }
-
 
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
         MainView()
-            .environmentObject(PodcastFetcher()) // Обеспечиваем доступ к данным для превью
+            .environmentObject(PodcastFetcher())
     }
 }

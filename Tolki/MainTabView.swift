@@ -6,10 +6,7 @@
 //
 
 import SwiftUI
-
 struct MainTabView: View {
- 
-
     var body: some View {
         TabView {
             MainView()
@@ -24,12 +21,6 @@ struct MainTabView: View {
                     Text("Подкасты")
                 }
             
-            CreatePostView()
-                .tabItem {
-                    Image(systemName: "plus")
-                    Text("Новый пост")
-                }
-            
             ProfileView()
                 .tabItem {
                     Image(systemName: "person.circle")
@@ -42,12 +33,12 @@ struct MainTabView: View {
                     Text("Настройки")
                 }
         }
-        .background(Color.background)
-        .ignoresSafeArea()
+        .accentColor(Color(.mainGreen))
+        .background(Color(.background)) // Задайте черный фон для TabView
+        .ignoresSafeArea(edges: .bottom) // Игнорируйте безопасную область внизу
     }
 }
 
 #Preview {
-   
     MainTabView()
 }
