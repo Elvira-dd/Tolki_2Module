@@ -1,84 +1,64 @@
 //
-//  IssueDetailView.swift
-//  Tolki
+//  IssueDateilView.swift
+//  Cry
 //
-//  Created by Эльвира on 24.12.2024.
+//  Created by Эльвира on 27.03.2025.
 //
+
 import SwiftUI
+
 struct IssueDetailView: View {
-    let issue: Issue
-    @StateObject var dataFetcher = DataFetcher() // Создаем экземпляр DataFetcher
-    @State private var postsForIssue: [Posts] = []
+var issue: Issue
 
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
-                // Название выпуска
-                Text(issue.name)
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .padding(.top, 20)
-
-                // Описание выпуска
-                Text("Описание выпуска:")
+var body: some View {
+    ScrollView {
+        VStack(alignment: .leading, spacing: 16) {
+            Text(issue.name)
+                .font(.largeTitle)
+                .fontWeight(.bold)
+            
+            Text(issue.description)
+                .font(.body)
+            
+            Text("Подкаст ID: \(issue.podcastId)")
+                .font(.subheadline)
+            
+            Text("Дата создания: \(issue.createdAt)")
+                .font(.subheadline)
+            
+            AsyncImage(url: URL(string: issue.coverURL)) { image in
+                image.resizable()
+                    .scaledToFit()
+                    .frame(height: 200)
+            } placeholder: {
+                ProgressView()
+            }
+            
+            // Раздел для комментариев
+            VStack(alignment: .leading) {
+                Text("Комментарии:")
                     .font(.headline)
-                    .foregroundColor(.secondary)
-                
-                Text(issue.link)
-                    .font(.body)
-                    .foregroundColor(.primary)
-                    .padding(.bottom, 20)
-
-                // Дата выпуска
-                Text("Дата создания: \(issue.createdAt)")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                
-                // Изображение обложки
-                AsyncImage(url: URL(string: issue.cover)) { image in
-                    image.resizable()
-                         .scaledToFit()
-                         .frame(width: 200, height: 200)
-                } placeholder: {
-                    ProgressView()
-                }
-                
-                // Ссылка на выпуск
-                Link("Перейти к выпуску", destination: URL(string: issue.url)!)
-                    .font(.subheadline)
-                    .foregroundColor(.blue)
-                    .padding(.top, 20)
-
-                // Посты, относящиеся к текущему выпуску
-                VStack(alignment: .leading, spacing: 15) {
-                    Text("Посты этого выпуска:")
-                        .font(.headline)
-                        .foregroundColor(.secondary)
-                    
-                    ForEach(postsForIssue, id: \.id) { post in
-                        Text(post.title)
+                ForEach(issue.comments) { comment in
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("User \(comment.userId):")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                        
+                        Text(comment.content)
                             .font(.body)
-                            .foregroundColor(.primary)
-                            .padding(.vertical, 5)
+                            .padding(.bottom, 10)
                     }
                 }
-                .padding(.top, 20)
             }
-            .padding()
+            .padding(.top)
         }
-        .onAppear {
-            dataFetcher.fetchData() // Загружаем посты при появлении экрана
-            filterPosts() // Фильтруем посты по issueId
-        }
-        .navigationTitle("Выпуск: \(issue.name)")
-        .navigationBarTitleDisplayMode(.inline)
+        .padding()
     }
+    .navigationTitle("Выпуск")
+}
+}
 
-    // Функция для фильтрации постов по issueId
-    private func filterPosts() {
-        postsForIssue = dataFetcher.posts.filter { post in
-            post.issueId == issue.id
-            
-        }
-    }
+#Preview {
+    PodcastView()
+       
 }
