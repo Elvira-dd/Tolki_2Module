@@ -6,59 +6,276 @@
 //
 
 import SwiftUI
+import SwiftUI
 
 struct IssueDetailView: View {
-var issue: Issue
-
-var body: some View {
-    ScrollView {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(issue.name)
-                .font(.largeTitle)
-                .fontWeight(.bold)
-            
-            Text(issue.description)
-                .font(.body)
-            
-            Text("Подкаст ID: \(issue.podcastId)")
-                .font(.subheadline)
-            
-            Text("Дата создания: \(issue.createdAt)")
-                .font(.subheadline)
-            
-            AsyncImage(url: URL(string: issue.coverURL)) { image in
-                image.resizable()
-                    .scaledToFit()
-                    .frame(height: 200)
-            } placeholder: {
-                ProgressView()
-            }
-            
-            // Раздел для комментариев
-            VStack(alignment: .leading) {
-                Text("Комментарии:")
-                    .font(.headline)
-                ForEach(issue.comments) { comment in
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("User \(comment.userId):")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                        
-                        Text(comment.content)
-                            .font(.body)
-                            .padding(.bottom, 10)
-                    }
-                }
-            }
-            .padding(.top)
-        }
-        .padding()
+    var issue: Issue
+    @State private var issues: [Issue] = []
+    @State private var selection: Int = 0
+    let menuItems = ["ВСЕ", "ОТЗЫВЫ", "ОБСУЖДЕНИЯ", "ПОХОЖЕЕ"]
+    
+    var relatedIssues: [Issue] {
+        issues.filter { $0.podcastId == issue.podcastId && $0.id != issue.id }
     }
-    .navigationTitle("Выпуск")
+    
+    var body: some View {
+        ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    AsyncImage(url: URL(string: issue.coverURL)) { image in
+                        image
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: .infinity)
+                            .clipped()
+                            .cornerRadius(12)
+                    } placeholder: {
+                        ProgressView()
+                    }
+                    Text(issue.createdAt)
+                        .font(.system(size: 16, weight: .regular))
+                        .foregroundColor(Color("MainLight"))
+                        .multilineTextAlignment(.leading)
+                        .padding(.bottom, 12)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    Text(issue.name)
+                        .font(.system(size: 32, weight: .bold))
+                        .foregroundColor(Color("MainLight"))
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    VStack {
+                        HStack {
+                            // Пункты меню
+                            ForEach(0..<menuItems.count, id: \.self) { index in
+                                Text(menuItems[index])
+                                    .font(.system(size: 14, weight: .medium))
+                                    .foregroundColor(self.selection == index ? Color("MainGreen") : .gray)
+                                    .padding(.horizontal,10.0)
+                                    .onTapGesture {
+                                        self.selection = index
+                                    }
+                            }
+                        }
+                        .padding(.vertical, 10)
+                        .overlay(
+                            Rectangle()
+                                .frame(height: 2)
+                                .foregroundColor(Color("MainLight3")) // Цвет обводки
+                                .offset(y: 20) // Расположение обводки
+                        )
+                        
+                    }
+                    VStack(){
+                        Text("Рейтинг подкастов")
+                            .font(.system(size: 32, weight: .bold))
+                            .foregroundColor(Color("MainLight"))
+                            .multilineTextAlignment(.leading)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        HStack(){
+                            HStack(){
+                                Image("StarIconFill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 30, height:30)
+                                Image("StarIconFill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 30, height:30)
+                                Image("StarIconFill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 30, height:30)
+                                Image("StarIconFill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 30, height:30)
+                                Image("StarIconNoFill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 30, height:30)
+                            }
+                            Spacer()
+                            Text("4.6")
+                                .font(.system(size: 32, weight: .bold))
+                                .foregroundColor(Color("MainGreen"))
+                                .multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text("Оценили 20459 пользователей")
+                                .font(.system(size: 12, weight: .bold))
+                                .foregroundColor(Color("MainLight"))
+                                .multilineTextAlignment(.leading)
+                                .frame(width: 100, alignment: .leading)
+                        }
+                        HStack() {
+                            VStack(alignment: .leading){
+                                Text("76%")
+                                    .font(.system(size: 64, weight: .medium))
+                                    .foregroundColor(Color("MainLight"))
+                                    .multilineTextAlignment(.leading)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                Text("Интересная тема обсуждений")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(Color("MainLight"))
+                                    .multilineTextAlignment(.leading)
+                                    .frame(width: 160, alignment: .leading)
+                            }
+                            .frame(width:150)
+                            .padding(.all,16)
+                            .background(Color("MainLight4"))
+                            .cornerRadius(8)
+                            
+                            VStack(alignment: .leading){
+                                Text("46%")
+                                    .font(.system(size: 64, weight: .medium))
+                                    .foregroundColor(Color("MainLight"))
+                                    .multilineTextAlignment(.leading)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                Text("Глубокий анализ материала")
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(Color("MainLight"))
+                                    .multilineTextAlignment(.leading)
+                                    .frame(width: 140, alignment: .leading)
+                            }
+                            .frame(width:150)
+                            .padding(.all,16)
+                            .background(Color("MainLight4"))
+                            .cornerRadius(8)
+                        }
+                        .padding(.top, 30)
+                    }
+                    
+                    Image("pay_us_pls")
+                        .resizable()  // Делаем изображение масштабируемым
+                        .scaledToFit()  // Подгоняем изображение по размеру контейнера
+                        .frame(width: .infinity)  // Устанавливаем размеры
+                        .padding(.top, 70.0)
+                    
+                    
+                    Text("Комментарии")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundColor(Color("MainLight"))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    if issue.comments.isEmpty {
+                        Text("Нет комментариев")
+                            .foregroundColor(.gray)
+                    } else {
+                        ForEach(issue.comments) { comment in
+                            VStack(alignment: .leading) {
+                                HStack(alignment: .center) {
+                                    Image("ProfileAvatar")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 32, height: 32)
+                                        .cornerRadius(50)
+                                    
+                                    VStack(alignment: .leading) {
+                                        Text(comment.userName)
+                                            .font(.system(size: 14, weight: .medium))
+                                            .foregroundColor(Color("MainLight"))
+                                        
+                                        Text("Знаток подкастов 8 уровня")
+                                            .font(.system(size: 12, weight: .regular))
+                                            .foregroundColor(Color("MainLight"))
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    Text(comment.createdAt)
+                                        .font(.system(size: 12, weight: .regular))
+                                        .foregroundColor(Color("MainLight"))
+                                }
+                                
+                                Text(comment.content)
+                                    .font(.system(size: 14, weight: .regular))
+                                    .foregroundColor(Color("MainLight"))
+                                    .multilineTextAlignment(.leading)
+                                    .padding(.top, 8)
+                                
+                                HStack(spacing: 12) {
+                                    Image("IconLike")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 24, height: 24)
+                                    
+                                    Image("IconDislike")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 24, height: 24)
+                                }
+                                .padding(.top, 16)
+                            }
+                            .padding(16)
+                            .background(Color("MainLight4"))
+                            .cornerRadius(8)
+                            .padding(.top, 24)
+                        }
+                    }
+                    
+                    Text("Похожие выпуски")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundColor(Color("MainLight"))
+                        .padding(.top, 20)
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 16) {
+                            ForEach(relatedIssues) { relatedIssue in
+                                NavigationLink(destination: IssueDetailView(issue: relatedIssue)) {
+                                    VStack(alignment: .leading) {
+                                        AsyncImage(url: URL(string: relatedIssue.coverURL)) { image in
+                                            image
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 300, height: 200)
+                                                .clipped()
+                                                .cornerRadius(10)
+                                        } placeholder: {
+                                            ProgressView()
+                                        }
+                                        
+                                        Text(relatedIssue.name)
+                                            .font(.system(size: 16, weight: .bold))
+                                            .foregroundColor(Color("MainLight"))
+                                            .lineLimit(2)
+                                            .padding(.top, 8)
+                                        
+                                        Text(relatedIssue.createdAt)
+                                            .font(.system(size: 12, weight: .regular))
+                                            .foregroundColor(Color("MainLight2"))
+                                    }
+                                    .frame(width: 300)
+                                    .padding(.vertical, 8)
+                                }
+                            }
+                        }
+                    }
+                    
+                    
+                }
+                .padding(.horizontal, 16)
+                .navigationBarTitle("", displayMode: .inline)
+                .navigationBarHidden(false)  // Отключение скрытия навигационной панели
+                .background(Color("Background"))
+                .onAppear {
+                    // Установим черный фон для NavigationBar
+                    UINavigationBar.appearance().barTintColor = UIColor.black
+                    UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.white]
+                    UINavigationBar.appearance().tintColor = .white // для кнопок и стрелок
+                }
+                .frame(width:.infinity)
+                
+            }
+            
+            .padding(.horizontal, 16)
+            .background(Color("Background"))
+            
+        
+    }
 }
-}
+
 
 #Preview {
     PodcastView()
-       
+    
 }
