@@ -6,99 +6,140 @@
 //
 
 import SwiftUI
-
-struct ProfileView: View {
-    @State private var user: UserProfile = UserProfile(
-        firstName: "Ксения",
-        lastName: "Кириленко",
-        email: "kirilenko@yandex.ru",
-        avatar: UIImage(named: "avatar_placeholder")
-    )
-    @State private var isEditing: Bool = false
-    @State private var selectedImage: UIImage?
-    @State private var navigateToContentView: Bool = false
-
-    var body: some View {
-        ScrollView {
-            VStack {
-                if let avatar = user.avatar {
-                    Image(uiImage: avatar)
-                        .resizable()
-                        .frame(width: 100, height: 100)
-                        .clipShape(Circle())
-                        .overlay(Circle().stroke(Color.white, lineWidth: 4))
-                        .shadow(radius: 10)
-                } else {
-                    Image(systemName: "person.circle.fill")
-                        .resizable()
-                        .frame(width: 100, height: 100)
-                        .clipShape(Circle())
-                        .overlay(Circle().stroke(Color.white, lineWidth: 4))
-                        .shadow(radius: 10)
-                }
-
-                Text("\(user.firstName) \(user.lastName)")
-                    .font(.title)
-                    .multilineTextAlignment(.center)
-                    .padding(.top, 10)
-
-                Text(user.email)
-                    .padding(.top, 5)
-
-                Spacer()
-
-                Button(action: {
-                    isEditing.toggle()
-                }) {
-                    Text("Edit Profile")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 50)
-                        .background(Color.blue)
-                        .cornerRadius(10)
-                        .padding(.horizontal, 20)
-                }
-                .sheet(isPresented: $isEditing) {
-                    EditProfileView(user: $user, selectedImage: $selectedImage)
-                }
-
-                Button(action: {
-                    navigateToContentView = true
-                }) {
-                    Text("Log Out")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 50)
-                        .background(Color.red)
-                        .cornerRadius(10)
-                        .padding(.horizontal, 20)
-                }
-                .padding(.top, 10)
-
-                NavigationLink(destination: ConView(), isActive: $navigateToContentView) {
-                    EmptyView()
+class ProfileViewModel: ObservableObject {
+    @Published var currentProfile: UserProfile?
+    @Published var isLoading = false
+    @Published var error: String?
+    
+    private let keychain = KeychainService()
+    
+    func loadCurrentProfile() {
+        isLoading = true
+        error = nil
+        
+        let token = keychain.getString(forKey: ViewModel.Const.tokenKey) ?? ""
+        
+        guard !token.isEmpty else {
+            error = "Токен авторизации не найден"
+            isLoading = false
+            return
+        }
+        
+        ProfileService.shared.fetchCurrentProfile(authToken: token) { [weak self] result in
+            DispatchQueue.main.async {
+                self?.isLoading = false
+                
+                switch result {
+                case .success(let profile):
+                    self?.currentProfile = profile
+                case .failure(let error):
+                    self?.error = error.localizedDescription
+                    print("Ошибка загрузки профиля: \(error.localizedDescription)")
                 }
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 20) // Добавляем отступы, чтобы контент не прижимался
         }
-        .background(Color(.systemBackground))
+    }
+}
+struct ProfileView: View {
+    @StateObject private var viewModel = ProfileViewModel()
+    
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 20) {
+                if viewModel.isLoading {
+                    ProgressView()
+                        .padding(.top, 50)
+                } else if let error = viewModel.error {
+                    ErrorView(error: error)
+                } else if let profile = viewModel.currentProfile {
+                    ProfileHeaderView(profile: profile)
+                    
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text(profile.profile.bio)
+                            .font(.body)
+                            .foregroundColor(.secondary)
+                        
+                        HStack {
+                            Image(systemName: "star.fill")
+                                .foregroundColor(.yellow)
+                            Text("Уровень: \(profile.profile.level)")
+                        }
+                        .font(.subheadline)
+                        
+                        if profile.admin {
+                            AdminBadge()
+                        }
+                    }
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(10)
+                }
+            }
+            .padding()
+        }
+        .navigationTitle("Профиль")
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            viewModel.loadCurrentProfile()
+        }
     }
 }
 
-
-
-struct UserProfile: Identifiable {
-    var id = UUID()
-    var firstName: String
-    var lastName: String
-    var email: String
-    var avatar: UIImage?
+// Вспомогательные View
+struct ProfileHeaderView: View {
+    let profile: UserProfile
+    
+    var body: some View {
+        HStack(spacing: 16) {
+            Image(systemName: "person.circle.fill")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 60, height: 60)
+                .foregroundColor(.blue)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(profile.profile.name)
+                    .font(.title2.bold())
+                
+                Text(profile.email)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+        }
+        .padding()
+    }
 }
 
-#Preview {
+struct ErrorView: View {
+    let error: String
+    
+    var body: some View {
+        VStack {
+            Image(systemName: "exclamationmark.triangle")
+                .font(.largeTitle)
+                .foregroundColor(.red)
+            Text(error)
+                .multilineTextAlignment(.center)
+                .foregroundColor(.red)
+        }
+        .padding()
+    }
+}
 
-    ProfileView()
+struct AdminBadge: View {
+    var body: some View {
+        HStack {
+            Image(systemName: "checkmark.seal.fill")
+                .foregroundColor(.green)
+            Text("Администратор")
+                .font(.caption)
+                .bold()
+        }
+        .padding(6)
+        .background(Color.green.opacity(0.2))
+        .cornerRadius(8)
+    }
 }

@@ -20,18 +20,7 @@ struct ThemeTag: Codable, Identifiable, Hashable {
     }
 }
 
-struct Profile: Codable, Identifiable, Hashable {
-    let id: Int
-    let name: String
-    let bio: String
-    let avatar: String
-    let level: String
-    let email: String // Email пользователя
 
-    enum CodingKeys: String, CodingKey {
-        case id, name, bio, avatar, level, email
-    }
-}
 
 // Структура для подкаста
 struct Podcast: Identifiable, Codable {
@@ -127,6 +116,8 @@ struct Issue: Identifiable, Codable {
 
 struct Comment: Identifiable, Codable {
     var id: Int
+    let commentable_type: String?
+    let commentable_id: Int?
     var userId: Int
     var content: String
     var userName: String
@@ -138,6 +129,8 @@ struct Comment: Identifiable, Codable {
         case content
         case userName = "user_name"
         case createdAt = "created_at"
+        case commentable_type
+        case commentable_id
     }
 }
 
@@ -148,5 +141,24 @@ struct Theme: Identifiable, Codable {
     enum CodingKeys: String, CodingKey {
         case id
         case name
+    }
+}
+
+// Models/UserProfile.swift
+struct UserProfile: Codable {
+    let id: Int
+    let email: String
+    let admin: Bool
+    let profile: ProfileDetails
+    
+    struct ProfileDetails: Codable {
+        let name: String
+        let bio: String
+        let level: String
+        
+        // Если level может быть числом, добавьте computed property
+        var levelInt: Int {
+            return Int(level) ?? 0
+        }
     }
 }
