@@ -145,20 +145,25 @@ struct Theme: Identifiable, Codable {
 }
 
 // Models/UserProfile.swift
+struct AuthResponse: Codable {
+    let messages: String
+    let isSuccess: Bool
+    let jwt: String
+    
+    enum CodingKeys: String, CodingKey {
+        case messages
+        case isSuccess = "is_success"
+        case jwt
+    }
+}
+
 struct UserProfile: Codable {
-    let id: Int
     let email: String
-    let admin: Bool
     let profile: ProfileDetails
     
     struct ProfileDetails: Codable {
         let name: String
         let bio: String
         let level: String
-        
-        // Если level может быть числом, добавьте computed property
-        var levelInt: Int {
-            return Int(level) ?? 0
-        }
     }
 }

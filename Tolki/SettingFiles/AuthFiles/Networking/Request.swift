@@ -1,5 +1,6 @@
 import Foundation
 
+// MARK: - Request Structure (updated)
 struct Request {
     enum RequestMethod: String {
         case get = "GET"
@@ -13,27 +14,29 @@ struct Request {
     var endpoint: Endpoint
     var method: RequestMethod
     var parameters: [String: String]?
-    let body: Data?
+    var body: Data?
+    var headers: [String: String]?  // Изменили на var
     var timeoutInterval: TimeInterval
 
     init(
         endpoint: Endpoint,
-        method: Request.RequestMethod = .get,
+        method: RequestMethod = .get,
         parameters: [String: String]? = nil,
         body: Data? = nil,
+        headers: [String: String]? = nil,
         timeoutInterval: TimeInterval = 60
     ) {
         self.endpoint = endpoint
         self.method = method
         self.parameters = parameters
         self.body = body
+        self.headers = headers
         self.timeoutInterval = timeoutInterval
 
         if var endpointParameters = endpoint.parameters {
             for (key, value) in parameters ?? [:] {
                 endpointParameters[key] = value
             }
-
             self.parameters = endpointParameters
         }
     }

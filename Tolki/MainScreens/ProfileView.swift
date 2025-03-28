@@ -41,51 +41,28 @@ class ProfileViewModel: ObservableObject {
     }
 }
 struct ProfileView: View {
-    @StateObject private var viewModel = ProfileViewModel()
+    @ObservedObject var viewModel: ViewModel
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 20) {
-                if viewModel.isLoading {
-                    ProgressView()
-                        .padding(.top, 50)
-                } else if let error = viewModel.error {
-                    ErrorView(error: error)
-                } else if let profile = viewModel.currentProfile {
-                    ProfileHeaderView(profile: profile)
-                    
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text(profile.profile.bio)
-                            .font(.body)
-                            .foregroundColor(.secondary)
-                        
-                        HStack {
-                            Image(systemName: "star.fill")
-                                .foregroundColor(.yellow)
-                            Text("Уровень: \(profile.profile.level)")
-                        }
-                        .font(.subheadline)
-                        
-                        if profile.admin {
-                            AdminBadge()
-                        }
-                    }
-                    .padding()
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(10)
-                }
+        VStack {
+            if let profile = viewModel.currentProfile {
+                Text(profile.profile.name)
+                    .font(.title)
+                Text(profile.email)
+                Text(profile.profile.bio)
+                Text("Level: \(profile.profile.level)")
+            } else if let error = viewModel.profileError {
+                Text("Error: \(error)")
+                    .foregroundColor(.red)
+            } else {
+                ProgressView()
             }
-            .padding()
         }
-        .navigationTitle("Профиль")
-        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            viewModel.loadCurrentProfile()
+            viewModel.fetchCurrentProfile()
         }
     }
 }
-
 // Вспомогательные View
 struct ProfileHeaderView: View {
     let profile: UserProfile
